@@ -167,6 +167,34 @@ router.get('/public/shop/:shopId/modifiers',
   }
 );
 
+// @route   GET /api/v1/menu/public/restaurant/:restaurantId/modifiers
+// @desc    Get restaurant modifiers for public viewing
+// @access  Public
+router.get('/public/restaurant/:restaurantId/modifiers',
+  param('restaurantId').isMongoId().withMessage('Invalid restaurant ID format'),
+  handleValidation,
+  (req, res) => {
+    // Convert restaurantId to ownerId and set ownerType
+    req.params.ownerType = 'restaurant';
+    req.params.ownerId = req.params.restaurantId;
+    return MenuController.getPublicModifiers(req, res);
+  }
+);
+
+// @route   GET /api/v1/menu/public/restaurant/restaurant/:restaurantId/modifiers
+// @desc    Get restaurant modifiers for public viewing (alternative URL format)
+// @access  Public
+router.get('/public/restaurant/restaurant/:restaurantId/modifiers',
+  param('restaurantId').isMongoId().withMessage('Invalid restaurant ID format'),
+  handleValidation,
+  (req, res) => {
+    // Convert restaurantId to ownerId and set ownerType
+    req.params.ownerType = 'restaurant';
+    req.params.ownerId = req.params.restaurantId;
+    return MenuController.getPublicModifiers(req, res);
+  }
+);
+
 // @route   GET /api/v1/menu/public/items/:itemId
 // @desc    Get public menu item details
 // @access  Public (no authentication required)
@@ -207,6 +235,99 @@ protectedRouter.use((req, res, next) => {
   return res.status(500).json({
     success: false,
     error: { message: 'Authentication service unavailable', code: 'AUTH_SERVICE_UNAVAILABLE' }
+  });
+});
+
+// 2. SPECIFIC ADMIN ROUTES (with auth)
+router.get('/shop/:shopId/categories',
+  authenticate,
+  authorize(['zone_shop', 'zone_vendor', 'zone_admin']),
+  param('shopId').isMongoId().withMessage('Invalid shop ID'),
+  handleValidation,
+  (req, res) => {
+    req.params.ownerType = 'shop';
+    req.params.ownerId = req.params.shopId;
+    return MenuController.getCategories(req, res);
+  }
+);
+
+router.post('/shop/:shopId/categories',
+  authenticate,
+  authorize(['zone_shop', 'zone_vendor', 'zone_admin']),
+  param('shopId').isMongoId().withMessage('Invalid shop ID'),
+  ...getValidation('createMenuCategory'),
+  handleValidation,
+  (req, res) => {
+    req.params.ownerType = 'shop';
+    req.params.ownerId = req.params.shopId;
+    return MenuController.createCategory(req, res);
+  }
+);
+
+router.get('/shop/:shopId/items',
+  authenticate,
+  authorize(['zone_shop', 'zone_vendor', 'zone_admin']),
+  param('shopId').isMongoId().withMessage('Invalid shop ID'),
+  handleValidation,
+  (req, res) => {
+    req.params.ownerType = 'shop';
+    req.params.ownerId = req.params.shopId;
+    return MenuController.getItems(req, res);
+  }
+);
+
+router.post('/shop/:shopId/items',
+  authenticate,
+  authorize(['zone_shop', 'zone_vendor', 'zone_admin']),
+  param('shopId').isMongoId().withMessage('Invalid shop ID'),
+  uploadMiddleware ? uploadMiddleware.single('image') : (req, res, next) => next(),
+  ...getValidation('createMenuItem'),
+  handleValidation,
+  (req, res) => {
+    req.params.ownerType = 'shop';
+    req.params.ownerId = req.params.shopId;
+    return MenuController.createItem(req, res);
+  }
+);
+
+// Add similar patterns for restaurant-specific routes
+router.get('/restaurant/:restaurantId/categories',
+  authenticate,
+  authorize(['restaurant_owner', 'admin']),
+  param('restaurantId').isMongoId().withMessage('Invalid restaurant ID'),
+  handleValidation,
+  (req, res) => {
+    req.params.ownerType = 'restaurant';
+    req.params.ownerId = req.params.restaurantId;
+    return MenuController.getCategories(req, res);
+  }
+);
+
+router.post('/restaurant/:restaurantId/categories',
+  authenticate,
+  authorize(['restaurant_owner', 'admin']),
+  param('restaurantId').isMongoId().withMessage('Invalid restaurant ID'),
+  ...getValidation('createMenuCategory'),
+  handleValidation,
+  (req, res) => {
+    req.params.ownerType = 'restaurant';
+    req.params.ownerId = req.params.restaurantId;
+    return MenuController.createCategory(req, res);
+  }
+);
+
+router.get('/debug/shop-routes/:shopId', (req, res) => {
+  res.json({
+    message: 'Shop routes working',
+    shopId: req.params.shopId,
+    availableEndpoints: [
+      `GET /menu/shop/${req.params.shopId}/categories`,
+      `POST /menu/shop/${req.params.shopId}/categories`,
+      `GET /menu/shop/${req.params.shopId}/items`,
+      `POST /menu/shop/${req.params.shopId}/items`,
+      `GET /menu/shop/${req.params.shopId}/modifiers`,
+      `POST /menu/shop/${req.params.shopId}/modifiers`
+    ]
   });
 });
 

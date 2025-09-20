@@ -57,6 +57,17 @@ router.get('/public/id/:id',
 );
 
 /**
+ * @route GET /api/v1/restaurants/:id
+ * @desc Direct access to restaurant by ID (public access for QR code scanning)
+ * @access Public
+ */
+router.get('/:id',
+  ValidationRules.validateObjectId('id'),
+  handleValidation,
+  wrapAsync(getRestaurantByIdPublic, 'getRestaurantByIdPublic')
+);
+
+/**
  * Protected Routes - Require Authentication
  */
 
