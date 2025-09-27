@@ -38,7 +38,7 @@ if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
 
 /**
  * Create UPI order for payment
- * @route POST /api/v1/upi-payments/create-order
+ * @route POST /upi-payments/create-order
  * @access Public
  */
 const createUpiOrder = catchAsync(async (req, res) => {
@@ -168,7 +168,7 @@ const createUpiOrder = catchAsync(async (req, res) => {
 
 /**
  * Handle UPI payment webhook
- * @route POST /api/v1/upi-payments/webhook
+ * @route POST /upi-payments/webhook
  * @access Public
  */
 const handleUpiWebhook = catchAsync(async (req, res) => {
@@ -302,7 +302,7 @@ async function triggerInstantPayout(paymentEntity) {
 
 /**
  * Check order status
- * @route GET /api/v1/upi-payments/check-order-status
+ * @route GET /upi-payments/check-order-status
  * @access Public
  */
 const checkOrderStatus = catchAsync(async (req, res) => {

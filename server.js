@@ -537,7 +537,7 @@ app.get('/api/config', (req, res) => {
 });
 
 // Test endpoint for UPI payments
-app.get('/api/v1/upi-payments/test', (req, res) => {
+app.get('/upi-payments/test', (req, res) => {
   res.json({
     success: true,
     message: 'UPI payment endpoint is accessible',

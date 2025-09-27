@@ -23,7 +23,7 @@ router.post('/test-create-order', (req, res) => {
 });
 
 /**
- * @route POST /api/v1/upi-payments/create-order
+ * @route POST /upi-payments/create-order
  * @desc Create UPI order for payment
  * @access Public
  */
@@ -39,7 +39,7 @@ router.post('/create-order',
 );
 
 /**
- * @route POST /api/v1/upi-payments/webhook
+ * @route POST /upi-payments/webhook
  * @desc Handle UPI payment webhook
  * @access Public
  */
@@ -50,7 +50,7 @@ router.post('/webhook',
 );
 
 /**
- * @route GET /api/v1/upi-payments/check-order-status
+ * @route GET /upi-payments/check-order-status
  * @desc Check order payment status
  * @access Public
  */
