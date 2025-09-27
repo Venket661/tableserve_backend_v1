@@ -333,6 +333,7 @@ const routeConfigs = [
   { name: 'plans', path: './src/routes/planRoutes', mount: '/plans', required: false },
   { name: 'plan-usage', path: './src/routes/planUsageRoutes', mount: '/plan-usage', required: false },
   { name: 'payment', path: './src/routes/paymentRoutes', mount: '/payment', required: false },
+  { name: 'upi-payments', path: './src/routes/upiPaymentRoutes', mount: '/upi-payments', required: true },
   { name: 'webhooks', path: './src/routes/webhookRoutes', mount: '/webhooks', required: false }, // Made optional
   { name: 'analytics', path: './src/routes/analyticsRoutes', mount: '/analytics', required: false },
   { name: 'reports', path: './src/routes/reportRoutes', mount: '/reports', required: false },
@@ -532,6 +533,15 @@ app.get('/api/config', (req, res) => {
         missingRequired: missingRequiredRoutes
       }
     }
+  });
+});
+
+// Test endpoint for UPI payments
+app.get('/api/v1/upi-payments/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'UPI payment endpoint is accessible',
+    timestamp: new Date().toISOString()
   });
 });
 

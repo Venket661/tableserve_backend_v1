@@ -189,6 +189,72 @@ Authorization: Bearer <token>
 
 For admin users, returns platform-wide dashboard. For other users, requires `entityType` and `entityId` query parameters.
 
+## UPI Payment Endpoints
+
+### Create UPI Order
+```http
+POST /upi-payments/create-order
+```
+
+**Request Body:**
+```json
+{
+  "amount": 250,
+  "restaurant_id": "restaurant_object_id",
+  "customer_id": "customer_object_id",
+  "payment_method": "upi"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "order_id": "order_KQbX7SZc5G...",
+  "amount": 250,
+  "restaurant_upi": "restaurant@upi"
+}
+```
+
+### Handle UPI Webhook
+```http
+POST /upi-payments/webhook
+```
+
+**Headers:**
+- `x-razorpay-signature`: Webhook signature
+
+**Request Body:**
+```json
+{
+  "event": "payment.captured",
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_KQbX7SZc5G...",
+        "order_id": "order_KQbX7SZc5G...",
+        "status": "captured"
+      }
+    }
+  }
+}
+```
+
+### Check Order Status
+```http
+GET /upi-payments/check-order-status?order_id=order_KQbX7SZc5G...
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "order_id": "order_KQbX7SZc5G...",
+  "status": "paid",
+  "order_status": "confirmed"
+}
+```
+
 ## Reports Endpoints
 
 ### Create Report
